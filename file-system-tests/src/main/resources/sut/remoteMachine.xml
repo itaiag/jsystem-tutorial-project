@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><sut validators="">
+    <machine>
+        <class>org.jsystem.file_system_so.Machine</class>
+        <fileSystem>
+            <class>org.jsystem.file_system_so.LinuxRemoteFileSystem</class>
+            <cliConnection>
+                <class>org.jsystem.file_system_so.UbuntuCliConnection</class>
+                <host>10.100.102.10</host>
+                <password>topq</password>
+                <user>topq</user>
+            </cliConnection>
+        </fileSystem>
+    </machine>
+</sut>
