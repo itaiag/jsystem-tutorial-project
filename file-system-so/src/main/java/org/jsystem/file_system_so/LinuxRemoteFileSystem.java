@@ -2,6 +2,13 @@ package org.jsystem.file_system_so;
 
 import com.aqua.sysobj.conn.CliCommand;
 
+/**
+ * This system object provides different file system operations over a Possix
+ * operating system.
+ * 
+ * @author Itai Agmon
+ *
+ */
 public class LinuxRemoteFileSystem extends AbstractRemoteFileSystem {
 
 	@Override

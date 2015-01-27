@@ -6,6 +6,14 @@ import com.aqua.sysobj.conn.CliConnectionImpl;
 
 import jsystem.framework.system.SystemObjectImpl;
 
+/**
+ * System object that represents remote file system. This class should be
+ * inhrite by different classes that will implement the different services
+ * according to each operating system
+ * 
+ * @author Itai Agmon
+ *
+ */
 public abstract class AbstractRemoteFileSystem extends SystemObjectImpl {
 
 	public CliConnectionImpl cliConnection;

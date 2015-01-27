@@ -9,12 +9,13 @@ import com.aqua.sysobj.conn.LinuxDefaultCliConnection;
 public class UbuntuCliConnection extends LinuxDefaultCliConnection {
 
 	public Prompt[] getPrompts() {
-		ArrayList<Prompt> prompts = new ArrayList<Prompt>();		
+		ArrayList<Prompt> prompts = new ArrayList<Prompt>();
 		Prompt p = new Prompt();
 		p.setCommandEnd(true);
 		p.setPrompt("# ");
 		prompts.add(p);
 
+		// Adding the prompt we need for the Ubuntu OS
 		p = new Prompt();
 		p.setCommandEnd(true);
 		p.setPrompt("$ ");
@@ -32,5 +33,4 @@ public class UbuntuCliConnection extends LinuxDefaultCliConnection {
 		return prompts.toArray(new Prompt[prompts.size()]);
 	}
 
-	
 }

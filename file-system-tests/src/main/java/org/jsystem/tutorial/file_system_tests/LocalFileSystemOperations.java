@@ -16,6 +16,7 @@ import java.util.List;
 
 import jsystem.framework.ParameterProperties;
 import jsystem.framework.TestProperties;
+import jsystem.framework.report.ReporterHelper;
 import jsystem.framework.scenario.Parameter;
 import jsystem.framework.scenario.UseProvider;
 import jsystem.framework.scenario.ValidationError;
@@ -24,13 +25,20 @@ import junit.framework.SystemTestCase4;
 
 import org.junit.Test;
 
+/**
+ * Provides building blocks for performing file system operations on local
+ * machine
+ * 
+ * @author Itai Agmon
+ *
+ */
 public class LocalFileSystemOperations extends SystemTestCase4 {
+
+	private static final String REPOSITORY_FOLDER = "c:\\";
 
 	public enum FileOrFolder {
 		FILE, FOLDER
 	}
-
-	private static final String REPOSITORY_FOLDER = "c:\\";
 
 	private StandardCopyOption copyOption;
 
@@ -50,7 +58,6 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 	 * Create temporary file with the specified prefix and suffix. Return the
 	 * full path of the newly created file.
 	 * 
-	 * @throws IOException
 	 */
 	@Test
 	@TestProperties(name = "Local - Create temp file with prefix '${prefix}' and suffix '${suffix}'", paramsInclude = {
@@ -61,26 +68,38 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 		report.report("Created file with name: " + tempFile);
 	}
 
+	/**
+	 * Create multiple files according to user preferences.
+	 */
 	@Test
 	@TestProperties(name = "Local - Create multiple files", paramsInclude = { "fileAttributesArr" })
-	public void createMultipleFiles() throws IOException {
+	public void createMultipleFiles() throws Exception {
+		report.step("About to create multiple files");
 		if (null == fileAttributesArr || fileAttributesArr.length == 0) {
+			report.report("No file attributes were specified by user", 2);
 			return;
 		}
-		for (FileAttributes attr : fileAttributesArr) {
-			Path filePath = Paths.get(attr.getFolder() + "/" + attr.getName());
-			report.report("About to create file " + filePath);
-			Files.createFile(filePath);
-			if (attr.isReadOnly()) {
-				new File(filePath.toString()).setReadOnly();
+		report.startLevel("Crating multiple files");
+		try {
+			for (FileAttributes attr : fileAttributesArr) {
+				Path filePath = Paths.get(attr.getFolder() + "/" + attr.getName());
+				report.report("About to create file " + filePath);
+				Files.write(filePath, attr.getContent().getBytes(), StandardOpenOption.CREATE);
+				File file = new File(filePath.toString());
+				if (attr.isReadOnly()) {
+					file.setReadOnly();
+				}
+				ReporterHelper.copyFileToReporterAndAddLink(report, file, attr.getName());
 			}
+
+		} finally {
+			report.stopLevel();
 		}
 	}
 
 	/**
 	 * Write specified content to file.
 	 * 
-	 * @throws IOException
 	 */
 	@Test
 	@TestProperties(name = "Local - Write content to file '${file}'", paramsInclude = { "file", "content", "append" })
@@ -100,12 +119,19 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 	@TestProperties(name = "Local - Copy file '${sourceFile}' to '${destinationFile}'", paramsInclude = { "sourceFile",
 			"destinationFile", "copyOption" })
 	public void copyFile() throws IOException {
+		report.step("About to copy file");
 		Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(destinationFile.getAbsolutePath()), copyOption);
 	}
 
+	/**
+	 * Asserts that size of the specified file is equals to the expected
+	 * specified file size.
+	 */
 	@Test
-	@TestProperties(name = "Local - Assert that file '${file}' size is '${size}'", paramsInclude = { "file", "expectedFileSize" })
+	@TestProperties(name = "Local - Assert that file '${file}' size is '${size}'", paramsInclude = { "file",
+			"expectedFileSize" })
 	public void assertFileSize() throws IOException {
+		report.step("About to assert file size");
 		Path filePath = Paths.get(file.getAbsolutePath());
 		DosFileAttributes attrs = Files.readAttributes(filePath, DosFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
 		Assert.assertEquals(expectedFileSize, attrs.size());
@@ -115,6 +141,7 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 	@TestProperties(name = "Local - Copy file '${fileFromRepository}' to '${destinationFile}'", paramsInclude = {
 			"fileFromRepository", "destinationFile", "copyOption" })
 	public void copyFileFromRepository() throws IOException {
+		report.step("About to copy file from the repository");
 		Path sourcePath = Paths.get(REPOSITORY_FOLDER + "/" + fileFromRepository);
 		Path destinationPath = Paths.get(destinationFile.getAbsolutePath());
 		if (copyOption != null) {
@@ -127,7 +154,6 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 	/**
 	 * Delete file with specified name
 	 * 
-	 * @throws IOException
 	 */
 	@Test
 	@TestProperties(name = "Local - Delete file or directory '${file}'", paramsInclude = { "file", "fileOrFolder",
@@ -193,6 +219,8 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 			}
 		}
 	}
+
+	/**** Setters and Getters method ****/
 
 	public String getTempFile() {
 		return tempFile;
@@ -318,5 +346,7 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 	public void setEmptyBeforeDeleting(boolean emptyBeforeDeleting) {
 		this.emptyBeforeDeleting = emptyBeforeDeleting;
 	}
+
+	/*************/
 
 }
