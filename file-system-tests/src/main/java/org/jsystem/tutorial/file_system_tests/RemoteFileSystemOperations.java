@@ -14,7 +14,7 @@ public class RemoteFileSystemOperations extends SystemTestCase4 {
 	private String sourceFolder, destinationFolder, sourceFile, destinationFile, folder, file, content;
 
 	private boolean append;
-
+	
 	@Before
 	public void setUp() throws Exception {
 		machine = (Machine) system.getSystemObject("machine");

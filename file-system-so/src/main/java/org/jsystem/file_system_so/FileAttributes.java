@@ -1,4 +1,4 @@
-package org.jsystem.tutorial.file_system_tests;
+package org.jsystem.file_system_so;
 
 import java.io.File;
 
