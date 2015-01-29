@@ -80,7 +80,7 @@ public class LocalFileSystemOperations extends SystemTestCase4 {
 			report.report("No file attributes were specified by user", 2);
 			return;
 		}
-		report.startLevel("Crating multiple files");
+		report.startLevel("Creating multiple files");
 		try {
 			for (FileAttributes attr : fileAttributesArr) {
 				Path filePath = Paths.get(attr.getFolder() + "/" + attr.getName());
